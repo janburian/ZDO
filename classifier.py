@@ -79,20 +79,19 @@ def load_test_data(test_data_url, filenames):
     return test_data
 
 
-def get_features_test_data(test_data):
+def get_features(data):
     object_features = []
-    for test_img in test_data:
+    for test_img in data:
         test_img_object_features = []
         test_img_labeled = skimage.measure.label(test_img > 0.5)
-        number_labeled_objects = (test_img_labeled.max())  # 0 = background
+        region_props = skimage.measure.regionprops(test_img_labeled)
         # plt.imshow(test_img_labeled, cmap='gray')
         # plt.show()
-        objects = []
-        for label in range(1, number_labeled_objects+1):
-            objects.append(test_img_labeled == label)
-
-        for object in objects:
-            features = count_object_features(object)
+        for object_props in region_props:
+            object_area = object_props.area
+            object_perimeter = object_props.perimeter
+            incompatibility = (object_perimeter ** 2) / object_area
+            features = [incompatibility]
             test_img_object_features.append(features)
 
         object_features.append(test_img_object_features)
@@ -123,7 +122,7 @@ if __name__ == "__main__":
     plt.imshow(img_labeled, cmap='gray')
     plt.show()
 
-    test = skimage.measure.regionprops(img_labeled)
+    # test = skimage.measure.regionprops(img_labeled)
 
     # Extracting objects (0 = background)
     squares = [img_labeled == 1, img_labeled == 2, img_labeled == 3]
@@ -135,6 +134,7 @@ if __name__ == "__main__":
     classes_str = ["square", "star", "circle"]
 
     # Training data
+    test = get_features([img])
     train_data = get_train_data(classes)
     target_data = get_target_data(classes)
 
@@ -149,5 +149,5 @@ if __name__ == "__main__":
     filenames = ["01.jpg", "02.jpg", "03.jpg", "04.jpg", "05.jpg", "06.jpg", "07.jpg", "08.jpg", "09.jpg",
                  "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg"]
     test_data = load_test_data(test_data_url, filenames)
-    features_test_data = get_features_test_data(test_data)
+    features_test_data = get_features(test_data)
     predict_data(knn, features_test_data, filenames, classes_str)

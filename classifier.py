@@ -1,13 +1,11 @@
-import scipy
-import urllib
 import skimage
 import skimage.color
 import skimage.measure
 import numpy as np
-from sklearn import svm
 from matplotlib import pyplot as plt
 from sklearn import neighbors
 from skimage.feature import corner_fast, corner_peaks
+
 
 def count_object_area(object):
     number_white_pixels = 0
@@ -24,6 +22,7 @@ def count_perimeter(object):
     perimeter = skimage.measure.perimeter(object_int, 4)
 
     return perimeter
+
 
 def get_train_data(classes):
     train_data = []
@@ -61,6 +60,7 @@ def get_target_data(classes):
 
     return target_data
 
+
 def load_train_data(url: str):
     # URL = "http://uc452cam01-kky.fav.zcu.cz/snapshot.jpg"
     img = skimage.io.imread(url, as_gray=True)
@@ -78,12 +78,13 @@ def load_test_data(test_data_url, filenames):
 
     return test_data
 
+
 def get_features_test_data(test_data):
     object_features = []
     for test_img in test_data:
         test_img_object_features = []
         test_img_labeled = skimage.measure.label(test_img > 0.5)
-        number_labeled_objects = (test_img_labeled.max()) # 0 = background
+        number_labeled_objects = (test_img_labeled.max())  # 0 = background
         # plt.imshow(test_img_labeled, cmap='gray')
         # plt.show()
         objects = []
@@ -97,6 +98,7 @@ def get_features_test_data(test_data):
         object_features.append(test_img_object_features)
 
     return np.array(object_features)
+
 
 def predict_data(knn, features_test_data, filenames, classes_str):
     index = 0
@@ -149,5 +151,3 @@ if __name__ == "__main__":
     test_data = load_test_data(test_data_url, filenames)
     features_test_data = get_features_test_data(test_data)
     predict_data(knn, features_test_data, filenames, classes_str)
-
-

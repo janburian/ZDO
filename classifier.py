@@ -6,50 +6,6 @@ from matplotlib import pyplot as plt
 from sklearn import neighbors
 from skimage.feature import corner_fast, corner_peaks
 
-
-def count_object_area(object):
-    number_white_pixels = 0
-    for i in range(len(object)):
-        for j in range(len(object[0])):
-            if object[i, j] == 1:
-                number_white_pixels += 1
-
-    return number_white_pixels
-
-
-def count_perimeter(object):
-    object_int = object.astype(int)
-    perimeter = skimage.measure.perimeter(object_int, 4)
-
-    return perimeter
-
-
-def get_train_data(classes):
-    train_data = []
-    for class_ in classes:
-        for object in class_:
-            features = count_object_features(object)
-            train_data.append(features)
-
-    return np.array(train_data)
-
-
-def count_object_features(object):
-    area = count_object_area(object)
-    perimeter = count_perimeter(object)
-    incompatibility = (perimeter ** 2) / area
-    # corners = corner_fast(object, n=10, threshold=0)
-    # number_corners = len(corner_peaks(corners))
-    # plt.imshow(corners)
-    # plt.show()
-    # features = [incompatibility, area, perimeter]
-    features = [incompatibility]
-    # plt.imshow(object)
-    # plt.show()
-
-    return features
-
-
 def get_target_data(classes):
     target_data = []
     index = -1

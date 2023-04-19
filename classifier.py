@@ -115,10 +115,10 @@ def predict_data(knn, features_test_data, filenames, classes_str):
 if __name__ == "__main__":
     # Loading training data
     URL = "https://raw.githubusercontent.com/mjirik/ZDO/master/objekty/ctverce_hvezdy_kolecka.jpg"
-    img = load_train_data(URL)
+    img_training = load_train_data(URL)
 
     # Labelling objects
-    img_labeled = skimage.measure.label(img > 0.5)
+    img_labeled = skimage.measure.label(img_training > 0.5)
     plt.imshow(img_labeled, cmap='gray')
     plt.show()
 
@@ -134,8 +134,8 @@ if __name__ == "__main__":
     classes_str = ["square", "star", "circle"]
 
     # Training data
-    test = get_features([img])
-    train_data = get_train_data(classes)
+    train_data = get_features([img_training])[0]
+    # train_data = get_train_data(classes)
     target_data = get_target_data(classes)
 
     print(train_data)

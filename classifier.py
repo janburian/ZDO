@@ -17,22 +17,13 @@ def get_target_data(classes):
     return target_data
 
 
-def load_train_data(url: str):
-    # URL = "http://uc452cam01-kky.fav.zcu.cz/snapshot.jpg"
-    img = skimage.io.imread(url, as_gray=True)
-    plt.imshow(img, cmap='gray')
-    plt.show()
-
-    return img
-
-
-def load_test_data(test_data_url, filenames):
-    test_data = []
+def load_data(url, filenames):
+    data = []
     for filename in filenames:
-        img = skimage.io.imread(test_data_url + filename, as_gray=True)
-        test_data.append(img)
+        img = skimage.io.imread(url + filename, as_gray=True)
+        data.append(img)
 
-    return test_data
+    return data
 
 
 def get_features(data):
@@ -70,15 +61,13 @@ def predict_data(knn, features_test_data, filenames, classes_str):
 
 if __name__ == "__main__":
     # Loading training data
-    URL = "https://raw.githubusercontent.com/mjirik/ZDO/master/objekty/ctverce_hvezdy_kolecka.jpg"
-    img_training = load_train_data(URL)
+    URL = "https://raw.githubusercontent.com/mjirik/ZDO/master/objekty/"
+    img_training = load_data(URL, ["ctverce_hvezdy_kolecka.jpg"])
 
     # Labelling objects
-    img_labeled = skimage.measure.label(img_training > 0.5)
+    img_labeled = skimage.measure.label(img_training[0] > 0.5)
     plt.imshow(img_labeled, cmap='gray')
     plt.show()
-
-    # test = skimage.measure.regionprops(img_labeled)
 
     # Extracting objects (0 = background)
     squares = [img_labeled == 1, img_labeled == 2, img_labeled == 3]
@@ -90,11 +79,12 @@ if __name__ == "__main__":
     classes_str = ["square", "star", "circle"]
 
     # Training data
-    train_data = get_features([img_training])[0]
+    train_data = get_features(img_training)[0]
     # train_data = get_train_data(classes)
     target_data = get_target_data(classes)
 
     print(train_data)
+    print(target_data)
 
     # Classifier
     knn = neighbors.KNeighborsClassifier()
@@ -104,6 +94,6 @@ if __name__ == "__main__":
     test_data_url = "https://raw.githubusercontent.com/mjirik/ZDO/master/objekty/"
     filenames = ["01.jpg", "02.jpg", "03.jpg", "04.jpg", "05.jpg", "06.jpg", "07.jpg", "08.jpg", "09.jpg",
                  "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg"]
-    test_data = load_test_data(test_data_url, filenames)
+    test_data = load_data(test_data_url, filenames)
     features_test_data = get_features(test_data)
     predict_data(knn, features_test_data, filenames, classes_str)

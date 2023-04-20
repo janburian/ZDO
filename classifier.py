@@ -6,16 +6,6 @@ from matplotlib import pyplot as plt
 from sklearn import neighbors
 from skimage.feature import corner_fast, corner_peaks
 
-def get_target_data(classes):
-    target_data = []
-    index = -1
-    for class_ in classes:
-        index += 1
-        for i in range(len(class_)):
-            target_data.append(index)
-
-    return target_data
-
 
 def load_data(url, filenames):
     data = []
@@ -44,6 +34,27 @@ def get_features(data):
         object_features.append(test_img_object_features)
 
     return np.array(object_features, dtype=object)
+
+
+def get_target_data(classes):
+    target_data = []
+    index = -1
+    for class_ in classes:
+        index += 1
+        for i in range(len(class_)):
+            target_data.append(index)
+
+    return target_data
+
+
+def plot_test_data(test_data, filenames):
+  f, axarr = plt.subplots(1, len(filenames), figsize=(20,6))
+  index = 0
+  for img in test_data:
+    axarr[index].imshow(img, cmap="gray")
+    axarr[index].set_title(filenames[index])
+    index += 1
+  plt.show()
 
 
 def predict_data(knn, features_test_data, filenames, classes_str):
@@ -96,4 +107,5 @@ if __name__ == "__main__":
                  "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg"]
     test_data = load_data(test_data_url, filenames)
     features_test_data = get_features(test_data)
+    plot_test_data(test_data, filenames)
     predict_data(knn, features_test_data, filenames, classes_str)

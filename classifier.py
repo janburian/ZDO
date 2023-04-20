@@ -43,7 +43,7 @@ def get_features(data):
 
         object_features.append(test_img_object_features)
 
-    return np.array(object_features)
+    return np.array(object_features, dtype=object)
 
 
 def predict_data(knn, features_test_data, filenames, classes_str):
